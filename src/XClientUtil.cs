@@ -19,7 +19,7 @@ public sealed class XClientUtil: IXClientUtil
     private readonly AsyncSingleton<XOpenApiClient> _client;
     public XClientUtil(IXHttpClient httpClientUtil, IConfiguration configuration)
     {
-        _client = new AsyncSingleton<XOpenApiClient>(async (token, _) =>
+        _client = new AsyncSingleton<XOpenApiClient>(async token =>
         {
             HttpClient httpClient = await httpClientUtil.Get(token).NoSync();
 
