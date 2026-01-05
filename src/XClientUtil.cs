@@ -14,35 +14,36 @@ using Soenneker.X.OpenApiClient;
 namespace Soenneker.X.ClientUtil;
 
 /// <inheritdoc cref="IXClientUtil"/>
-public sealed class XClientUtil: IXClientUtil
+public sealed class XClientUtil : IXClientUtil
 {
+    private readonly IXHttpClient _httpClientUtil;
+    private readonly string _apiKey;
+
     private readonly AsyncSingleton<XOpenApiClient> _client;
+
     public XClientUtil(IXHttpClient httpClientUtil, IConfiguration configuration)
     {
-        _client = new AsyncSingleton<XOpenApiClient>(async token =>
-        {
-            HttpClient httpClient = await httpClientUtil.Get(token).NoSync();
+        _httpClientUtil = httpClientUtil;
+        _apiKey = configuration.GetValueStrict<string>("X:ApiKey");
 
-            var apiKey = configuration.GetValueStrict<string>("X:ApiKey");
-
-            var requestAdapter = new HttpClientRequestAdapter(new BearerAuthenticationProvider(apiKey), httpClient: httpClient);
-
-            return new XOpenApiClient(requestAdapter);
-        });
+        // No closure: method group
+        _client = new AsyncSingleton<XOpenApiClient>(CreateClient);
     }
 
-    public ValueTask<XOpenApiClient> Get(CancellationToken cancellationToken = default)
+    private async ValueTask<XOpenApiClient> CreateClient(CancellationToken token)
     {
-        return _client.Get(cancellationToken);
+        HttpClient httpClient = await _httpClientUtil.Get(token)
+                                                     .NoSync();
+
+        var requestAdapter = new HttpClientRequestAdapter(new BearerAuthenticationProvider(_apiKey), httpClient: httpClient);
+
+        return new XOpenApiClient(requestAdapter);
     }
 
-    public void Dispose()
-    {
-        _client.Dispose();
-    }
+    public ValueTask<XOpenApiClient> Get(CancellationToken cancellationToken = default) =>
+        _client.Get(cancellationToken);
 
-    public ValueTask DisposeAsync()
-    {
-        return _client.DisposeAsync();
-    }
+    public void Dispose() => _client.Dispose();
+
+    public ValueTask DisposeAsync() => _client.DisposeAsync();
 }
