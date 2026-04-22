@@ -1,20 +1,19 @@
-﻿using Soenneker.X.ClientUtil.Abstract;
-using Soenneker.Tests.FixturedUnit;
-using Xunit;
+using Soenneker.X.ClientUtil.Abstract;
+using Soenneker.Tests.HostedUnit;
 
 namespace Soenneker.X.ClientUtil.Tests;
 
-[Collection("Collection")]
-public sealed class XClientUtilTests : FixturedUnitTest
+[ClassDataSource<Host>(Shared = SharedType.PerTestSession)]
+public sealed class XClientUtilTests : HostedUnitTest
 {
     private readonly IXClientUtil _util;
 
-    public XClientUtilTests(Fixture fixture, ITestOutputHelper output) : base(fixture, output)
+    public XClientUtilTests(Host host) : base(host)
     {
         _util = Resolve<IXClientUtil>(true);
     }
 
-    [Fact]
+    [Test]
     public void Default()
     {
 
