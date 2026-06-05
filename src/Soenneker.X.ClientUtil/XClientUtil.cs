@@ -43,7 +43,14 @@ public sealed class XClientUtil : IXClientUtil
     public ValueTask<XOpenApiClient> Get(CancellationToken cancellationToken = default) =>
         _client.Get(cancellationToken);
 
+    /// <summary>
+    /// Releases resources used by the current instance.
+    /// </summary>
     public void Dispose() => _client.Dispose();
 
+    /// <summary>
+    /// Asynchronously releases resources used by the current instance.
+    /// </summary>
+    /// <returns>A task that represents the asynchronous operation.</returns>
     public ValueTask DisposeAsync() => _client.DisposeAsync();
 }
