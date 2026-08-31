@@ -6,12 +6,12 @@ using Soenneker.X.ClientUtil.Abstract;
 namespace Soenneker.X.ClientUtil.Registrars;
 
 /// <summary>
-/// An async thread-safe singleton for X OpenApiClient
+/// Registers the configured X OpenAPI client provider.
 /// </summary>
 public static class XClientUtilRegistrar
 {
     /// <summary>
-    /// Adds <see cref="IXClientUtil"/> as a singleton service. <para/>
+    /// Adds <see cref="IXClientUtil"/> as a singleton service.
     /// </summary>
     public static IServiceCollection AddXClientUtilAsSingleton(this IServiceCollection services)
     {
@@ -21,7 +21,7 @@ public static class XClientUtilRegistrar
     }
 
     /// <summary>
-    /// Adds <see cref="IXClientUtil"/> as a scoped service. <para/>
+    /// Adds <see cref="IXClientUtil"/> as a scoped service while keeping the underlying HTTP transport singleton.
     /// </summary>
     public static IServiceCollection AddXClientUtilAsScoped(this IServiceCollection services)
     {

@@ -13,18 +13,17 @@ using Soenneker.X.OpenApiClient;
 
 namespace Soenneker.X.ClientUtil;
 
-/// <inheritdoc cref="IXClientUtil"/>
 public sealed class XClientUtil : IXClientUtil
 {
     private readonly IXHttpClient _httpClientUtil;
-    private readonly string _apiKey;
+    private readonly string _bearerToken;
 
     private readonly AsyncSingleton<XOpenApiClient> _client;
 
     public XClientUtil(IXHttpClient httpClientUtil, IConfiguration configuration)
     {
         _httpClientUtil = httpClientUtil;
-        _apiKey = configuration.GetValueStrict<string>("X:ApiKey");
+        _bearerToken = configuration["X:BearerToken"] ?? configuration.GetValueStrict<string>("X:ApiKey");
 
         // No closure: method group
         _client = new AsyncSingleton<XOpenApiClient>(CreateClient);
@@ -35,7 +34,7 @@ public sealed class XClientUtil : IXClientUtil
         HttpClient httpClient = await _httpClientUtil.Get(token)
                                                      .NoSync();
 
-        var requestAdapter = new HttpClientRequestAdapter(new BearerAuthenticationProvider(_apiKey), httpClient: httpClient);
+        var requestAdapter = new HttpClientRequestAdapter(new BearerAuthenticationProvider(_bearerToken), httpClient: httpClient);
 
         return new XOpenApiClient(requestAdapter);
     }
@@ -43,14 +42,7 @@ public sealed class XClientUtil : IXClientUtil
     public ValueTask<XOpenApiClient> Get(CancellationToken cancellationToken = default) =>
         _client.Get(cancellationToken);
 
-    /// <summary>
-    /// Releases resources used by the current instance.
-    /// </summary>
     public void Dispose() => _client.Dispose();
 
-    /// <summary>
-    /// Asynchronously releases resources used by the current instance.
-    /// </summary>
-    /// <returns>A task that represents the asynchronous operation.</returns>
     public ValueTask DisposeAsync() => _client.DisposeAsync();
 }
