@@ -13,6 +13,7 @@ using Soenneker.X.OpenApiClient;
 
 namespace Soenneker.X.ClientUtil;
 
+/// <inheritdoc cref="IXClientUtil" />
 public sealed class XClientUtil : IXClientUtil
 {
     private const string ApiHost = "api.x.com";
