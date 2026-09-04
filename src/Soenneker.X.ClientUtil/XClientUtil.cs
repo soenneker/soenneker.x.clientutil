@@ -15,6 +15,8 @@ namespace Soenneker.X.ClientUtil;
 
 public sealed class XClientUtil : IXClientUtil
 {
+    private const string ApiHost = "api.x.com";
+
     private readonly IXHttpClient _httpClientUtil;
     private readonly string _bearerToken;
 
@@ -34,7 +36,7 @@ public sealed class XClientUtil : IXClientUtil
         HttpClient httpClient = await _httpClientUtil.Get(token)
                                                      .NoSync();
 
-        var requestAdapter = new HttpClientRequestAdapter(new BearerAuthenticationProvider(_bearerToken), httpClient: httpClient);
+        var requestAdapter = new HttpClientRequestAdapter(new BearerAuthenticationProvider(_bearerToken, ApiHost), httpClient: httpClient);
 
         return new XOpenApiClient(requestAdapter);
     }
