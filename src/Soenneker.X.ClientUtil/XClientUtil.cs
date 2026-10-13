@@ -26,7 +26,7 @@ public sealed class XClientUtil : IXClientUtil
     public XClientUtil(IXHttpClient httpClientUtil, IConfiguration configuration)
     {
         _httpClientUtil = httpClientUtil;
-        _bearerToken = configuration["X:BearerToken"] ?? configuration.GetValueStrict<string>("X:ApiKey");
+        _bearerToken = configuration["X:BearerToken"] ?? configuration.GetStringStrict("X:ApiKey");
 
         // No closure: method group
         _client = new AsyncSingleton<XOpenApiClient>(CreateClient);
